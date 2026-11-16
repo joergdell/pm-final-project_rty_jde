@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A Fair Way Forward: final project</title>
+<style>
+:root{
+  --bg:#07162C;--fg:#ffffff;--muted:#cbd5e1;
+  --orange:#fb923c;--cyan:#22d3ee;--teal:#34d399;--blue:#60a5fa;--violet:#a78bfa;--pink:#f472b6;
+  --border:rgba(251,146,60,0.25);--card:rgba(255,255,255,0.04);
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-snap-type:y mandatory;scroll-behavior:smooth;background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);line-height:1.5;-webkit-font-smoothing:antialiased}
+section{min-height:100vh;scroll-snap-align:start;padding:clamp(18px,3vw,40px) clamp(20px,6vw,88px);display:flex;flex-direction:column;justify-content:center;position:relative}
+.wrap{max-width:1180px;width:100%;margin:0 auto}
+.eyebrow{font-family:var(--mono);text-transform:uppercase;letter-spacing:.12em;color:#fdba74;font-size:.78rem;margin:0 0 10px}
+h1{font-size:clamp(2rem,5vw,3.8rem);line-height:1.08;margin:0 0 18px;letter-spacing:-.02em}
+h2{font-size:clamp(1.5rem,3vw,2.2rem);line-height:1.12;margin:0 0 14px;letter-spacing:-.01em}
+h3{font-size:1.02rem;margin:0 0 8px}
+p{margin:0 0 10px;color:var(--muted);font-size:clamp(.95rem,1.35vw,1.08rem)}
+.lead{font-size:clamp(1.05rem,1.8vw,1.35rem);color:#e2e8f0;max-width:62ch}
+.card{background:var(--card);border:1px solid var(--border);border-radius:15px;padding:15px 18px}
+.hero{background:linear-gradient(135deg,rgba(251,146,60,.16),rgba(34,211,238,.07));box-shadow:0 18px 40px rgba(0,0,0,.35)}
+.lbl{font-family:var(--mono);text-transform:uppercase;letter-spacing:.12em;font-size:.7rem;color:#fdba74;display:block;margin-bottom:8px}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+.pill{display:inline-block;font-family:var(--mono);font-size:.78rem;padding:6px 13px;border-radius:999px;border:1px solid var(--border);color:#fff;background:rgba(251,146,60,.1);margin:0 8px 8px 0}
+.pill.c{border-color:rgba(34,211,238,.4);background:rgba(34,211,238,.1)}
+.pill.t{border-color:rgba(52,211,153,.4);background:rgba(52,211,153,.1)}
+.pill.v{border-color:rgba(167,139,250,.45);background:rgba(167,139,250,.1)}
+.callout{border-left:4px solid var(--orange);background:linear-gradient(90deg,rgba(251,146,60,.16),rgba(251,146,60,.03));border-radius:0 14px 14px 0;padding:18px 22px;box-shadow:0 12px 28px rgba(0,0,0,.3)}
+.callout p{color:#fff;font-size:clamp(1rem,1.7vw,1.25rem);margin:0}
+.ph{border:1px dashed rgba(203,213,225,.4);border-radius:12px;padding:14px 16px;color:var(--muted);font-style:italic;font-size:.95rem}
+ul{margin:0;padding-left:18px;color:var(--muted);font-size:clamp(.92rem,1.3vw,1.04rem)}
+li{margin-bottom:5px}
+.col h3{font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;font-size:.8rem}
+.col.now{border-top:3px solid var(--teal)}.col.now h3{color:var(--teal)}
+.col.next{border-top:3px solid var(--blue)}.col.next h3{color:var(--blue)}
+.col.later{border-top:3px solid var(--violet)}.col.later h3{color:var(--violet)}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;margin-top:6px}
+.step{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;position:relative}
+.step .n{font-family:var(--mono);color:#fdba74;font-size:.75rem;letter-spacing:.12em}
+.step b{display:block;font-size:1.05rem;margin:4px 0 0}
+.step.misery{border-color:var(--pink);background:linear-gradient(160deg,rgba(244,114,182,.18),rgba(244,114,182,.04));box-shadow:0 12px 28px rgba(244,114,182,.18)}
+.step.misery .tag{display:inline-block;margin-top:10px;font-family:var(--mono);font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--pink);border:1px solid rgba(244,114,182,.5);border-radius:999px;padding:3px 10px}
+.metric{text-align:left}
+.metric .big{font-family:var(--mono);font-size:1.55rem;font-weight:700;color:var(--orange);margin:2px 0 6px;line-height:1.2}
+.metric.cy .big{color:var(--cyan)}.metric.te .big{color:var(--teal)}.metric.vi .big{color:var(--violet)}
+.small{font-size:.82rem;color:#94a3b8}
+.foot{font-family:var(--mono);font-size:.72rem;color:#94a3b8;margin-top:18px}
+a{color:#fdba74;text-decoration:none;border-bottom:1px dashed rgba(253,186,116,.5)}
+#bar{position:fixed;top:0;left:0;height:4px;width:0;background:linear-gradient(90deg,var(--orange),var(--cyan));z-index:50}
+#dots{position:fixed;right:14px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:11px;z-index:50}
+#dots button{width:11px;height:11px;border-radius:50%;border:1.5px solid rgba(203,213,225,.55);background:transparent;padding:0;cursor:pointer}
+#dots button.on{background:var(--orange);border-color:var(--orange)}
+#dots button:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
+.big-submit{display:inline-block;margin-top:22px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;font-size:.9rem;padding:14px 26px;border-radius:999px;background:var(--orange);color:#07162C;font-weight:700;box-shadow:0 14px 30px rgba(251,146,60,.35)}
+.center{text-align:center;align-items:center}
+@media (max-width:900px){.g2,.g3,.g4,.steps{grid-template-columns:1fr}#dots{display:none}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<nav id="dots" aria-label="Slides"></nav>
+
+<section id="s1" data-title="Cover">
+  <div class="wrap">
+    <p class="eyebrow">Product Management Certification · Final Project</p>
+    <div class="card hero" style="padding:clamp(24px,4vw,48px)">
+      <h1>A Fair Way Forward: a reliable mobile income-document step</h1>
+      <p class="lead">Mobile consumers drop out of the instalment journey at the income document step. A working upload and a clear explanation of why income is asked would let them finish in one sitting without calling an agent.</p>
+      <div style="margin-top:22px">
+        <span class="pill">Joerg Dell · cohort not stated</span>
+        <span class="pill c"><a href="https://github.com/joergdell/pm-final-project_rty_jde" style="border:0;color:#fff">https://github.com/joergdell/pm-final-project_rty_jde</a></span>
+        <span class="pill v">Prototype: 04-roadmap/prototype.html</span>
+      </div>
+    </div>
+    <p class="foot">Practice case: Riverty BU Collection, digital instalment journey. All data comes from a fictional practice data pack and is not Riverty research.</p>
+  </div>
+</section>
+
+<section id="s2" data-title="Strategy">
+  <div class="wrap">
+    <p class="eyebrow">Slide 5 · Strategy</p>
+    <h2>Clear the consumer's way before adding features</h2>
+    <div class="grid g2" style="margin-bottom:18px">
+      <div class="card"><span class="lbl">Problem hook</span><p style="color:#fff">Two problems: a journey that breaks on mobile, and one that is unclear and not fitted to the consumer. Only 77.9% continue from the income document step to plan review (all-device figure), and 853 journeys in the sample month asked for a document that never arrived (T-201).</p></div>
+      <div class="card"><span class="lbl">Value proposition</span><p style="color:#fff">Resolve the biggest bug-related pain points first and review the journey to gain trust and clarity. Clear the consumer's way before adding new features.</p></div>
+    </div>
+    <div class="callout"><span class="lbl">Hypothesis</span><p>A reliable mobile income-document step for the mobile-first consumer will result in more plans completed in one sitting without an agent call, measured by a lift in 72-hour continuation from document step to plan review. Working target +7.1 points (an assumption). Agent contact within 7 days and missed payments within 60 days are protected.</p></div>
+  </div>
+</section>
+
+<section id="s3" data-title="Research">
+  <div class="wrap">
+    <p class="eyebrow">Slide 6 · Research</p>
+    <h2>The competitor is the manual workaround</h2>
+    <div class="card" style="margin-bottom:20px"><span class="lbl">Competitive analysis / workaround</span><p style="color:#fff">The manual workaround is the competitor: the consumer leaves the journey and phones an agent (333 upload-problem and 419 "why is income asked" contacts per month), then repeats details the agent cannot see. The future-state journey replaces this with one sitting, one explanation and shared data. No external competitor is analysed, and the research does not cover one.</p></div>
+    <span class="lbl">Journey map · future state for a mobile-first consumer at the income document step</span>
+    <div class="steps">
+      <div class="step"><span class="n">STAGE 1</span><b>Understand the ask</b></div>
+      <div class="step misery"><span class="n">STAGE 2</span><b>Capture and upload</b><span class="tag">Moment of misery: upload times out (T-201)</span></div>
+      <div class="step"><span class="n">STAGE 3</span><b>Review and confirm</b></div>
+      <div class="step"><span class="n">STAGE 4</span><b>Agree and stay on track</b></div>
+    </div>
+    <p style="margin-top:14px">Each stage names the user action, internal state and the pain point it addresses. See 02-discovery/competitive-and-journey.md.</p>
+  </div>
+</section>
+
+<section id="s4" data-title="Blueprint">
+  <div class="wrap">
+    <p class="eyebrow">Slide 7 · Blueprint</p>
+    <h2>Roadmap and PRD highlights</h2>
+    <div class="grid g3" style="margin-bottom:16px">
+      <div class="card col now"><h3>Now · Phase 1 (weeks 1–4)</h3><ul><li>Mobile upload fix</li><li>Income explainer</li><li>Reminder timing</li></ul></div>
+      <div class="card col next"><h3>Next · Phase 2 (weeks 5–8)</h3><ul><li>Amount matches the letter</li><li>Chat shows missed-payment consequences</li><li>Agent handoff summary</li></ul></div>
+      <div class="card col later"><h3>Later · Phase 3</h3><ul><li>One plan for several claims</li><li>Affordability check</li></ul></div>
+    </div>
+    <p class="small" style="margin:-4px 0 16px">Timing is an assumption and the backlog items were not scored.</p>
+    <div class="grid g3">
+      <div class="card"><span class="lbl">PRD · Feature</span><p style="color:#fff;margin:0">Reliable mobile income-document step.</p></div>
+      <div class="card"><span class="lbl">PRD · Musts</span><ul><li>Upload succeeds on mobile</li><li>Progress and a clear confirmation or error with retry</li><li>In-flow explainer (purpose, meaning of income, retention period)</li><li>Answers kept when going back or leaving</li></ul></div>
+      <div class="card"><span class="lbl">PRD · Out of scope</span><ul><li>Multi-claim plans</li><li>Pay-day date</li><li>Chat on every page</li></ul></div>
+    </div>
+    <div style="margin-top:16px"><span class="pill v">Prototype: 04-roadmap/prototype.html</span><span class="small">A self-contained demo with a switch between three arms (control, reliability, reliability plus explainer) and a browser-side event log. Uploads are simulated and nothing is sent anywhere.</span></div>
+  </div>
+</section>
+
+<section id="s5" data-title="Validation">
+  <div class="wrap">
+    <p class="eyebrow">Slide 8 · Validation</p>
+    <h2>Experiment plan</h2>
+    <div class="grid g3" style="margin-bottom:14px">
+      <div class="card hero"><span class="lbl">Hypothesis</span><p style="color:#fff;margin:0">A reliable mobile income-document step for the mobile-first consumer will result in more plans completed in one sitting without an agent call. Working target +7.1 points (an assumption).</p></div>
+      <div class="card"><span class="lbl">Control vs variant</span><p style="color:#fff;margin:0">Three-arm A/B test (control, reliability, reliability plus explainer), mobile only, 28 days with enrollment on days 1 to 21.</p></div>
+      <div class="card"><span class="lbl">Primary metric · baseline · MDE</span><p style="color:#fff;margin:0">Share of users reaching plan review within 72 hours of first seeing the document step. Baseline: only 77.9% continue from the document step to plan review (all-device figure). Working target +7.1 points (an assumption).</p></div>
+    </div>
+    <div class="grid g3">
+      <div class="card"><span class="lbl">Guardrails</span><p style="color:#fff;margin:0">Agent contact within 7 days and missed payments within 60 days, both compared against control.</p></div>
+      <div class="card"><span class="lbl">Ship / iterate / kill</span>
+        <p style="color:#fff"><b style="color:var(--teal)">Ship:</b> Ship C if it beats control by at least 5.0 points (p &lt; 0.05) and the guardrails hold.</p>
+        <div class="ph" style="padding:8px 12px">Iterate and kill rules: see 05-experimentation/experimentation-plan.md</div></div>
+      <div class="card"><span class="lbl">Status</span><p style="color:#fff;margin:0">The test has not run yet. Two launch gates are open: compliance wording and retention period, and the mobile-only baseline and traffic.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="s6" data-title="Launch">
+  <div class="wrap">
+    <p class="eyebrow">Slide 9 · Launch</p>
+    <h2>GTM strategy and success metrics</h2>
+    <div class="grid g3" style="margin-bottom:14px">
+      <div class="card"><span class="lbl">Goal</span><p style="color:#fff;margin:0">Conversion</p></div>
+      <div class="card"><span class="lbl">Audience</span><p style="color:#fff;margin:0">Mobile users in the German portal who reach the income document step (about 4,660 per month, a derived assumption).</p></div>
+      <div class="card"><span class="lbl">Tier</span><p style="color:#fff;margin:0">S, a release rather than a launch.</p></div>
+    </div>
+    <span class="lbl">Channels</span>
+    <div style="margin-bottom:12px"><span class="pill t">The step itself</span><span class="pill c">Post-test outreach messages</span><span class="pill v">Internal briefing for agents and client managers</span></div>
+    <span class="lbl">Success-metrics dashboard</span>
+    <div class="grid g4" style="margin-bottom:14px">
+      <div class="card metric"><span class="lbl">Primary</span><div class="big">72-hour continuation</div><span class="small">Reaching plan review after first seeing the document step</span></div>
+      <div class="card metric cy"><span class="lbl">Technical fix</span><div class="big">First-try upload success rate</div></div>
+      <div class="card metric te"><span class="lbl">Guardrail</span><div class="big">Agent contact within 7 days</div></div>
+      <div class="card metric vi"><span class="lbl">Monitored</span><div class="big">Missed payments within 60 days</div></div>
+    </div>
+    <div class="grid g2">
+      <div class="card"><span class="lbl">Most likely decision</span><p style="color:#fff;margin:0">Iterate.</p></div>
+      <div class="ph">Bad signal to watch for: see 06-launch/gtm-and-dashboard.md</div>
+    </div>
+  </div>
+</section>
+
+<section id="s7" data-title="Story">
+  <div class="wrap">
+    <p class="eyebrow">Slide 10 · Story</p>
+    <h2>What I learned and what comes next</h2>
+    <div class="grid g2">
+      <div class="card"><span class="lbl">Friction + aha moment</span>
+        <div class="ph">To be added: the Individual Insights reflection in 06-launch/individual-insights.md has not been written yet.</div></div>
+      <div class="card hero"><span class="lbl">Key takeaways / next</span><p style="color:#fff;margin:0">Next steps follow from the open items: get compliance wording and the retention period, pull the mobile-only baseline and real traffic, then run the three-arm test. Later backlog items are the amount mismatch, missed-payment consequences and the agent view of what the consumer entered.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="s8" class="center" data-title="Submit">
+  <div class="wrap" style="text-align:center">
+    <p class="eyebrow">Thank you</p>
+    <h1>A Fair Way Forward</h1>
+    <p class="lead" style="margin:0 auto 20px">Joerg Dell · cohort not stated</p>
+    <span class="pill c"><a href="https://github.com/joergdell/pm-final-project_rty_jde" style="border:0;color:#fff">https://github.com/joergdell/pm-final-project_rty_jde</a></span>
+    <div><span class="big-submit">Submit to the learning platform</span></div>
+    <p class="foot">Product Management Certification · Product School</p>
+  </div>
+</section>
+
+<script>
+(function(){
+  var secs=[].slice.call(document.querySelectorAll('section'));
+  var dots=document.getElementById('dots'), bar=document.getElementById('bar'), cur=0;
+  secs.forEach(function(s,i){
+    var b=document.createElement('button');
+    b.setAttribute('aria-label','Go to slide '+(i+1)+': '+s.dataset.title);
+    b.addEventListener('click',function(){go(i)});
+    dots.appendChild(b);
+  });
+  function mark(i){
+    cur=i;
+    [].forEach.call(dots.children,function(d,k){d.classList.toggle('on',k===i)});
+  }
+  function go(i){
+    i=Math.max(0,Math.min(secs.length-1,i));
+    secs[i].scrollIntoView({behavior:'smooth',block:'start'});
+    mark(i);
+  }
+  function onScroll(){
+    var h=document.documentElement.scrollHeight-innerHeight;
+    bar.style.width=(h>0?(scrollY/h*100):0)+'%';
+    var mid=scrollY+innerHeight/2;
+    for(var i=0;i<secs.length;i++){
+      if(mid>=secs[i].offsetTop&&mid<secs[i].offsetTop+secs[i].offsetHeight){if(i!==cur)mark(i);break}
+    }
+  }
+  addEventListener('scroll',onScroll,{passive:true});
+  addEventListener('resize',onScroll);
+  addEventListener('keydown',function(e){
+    if(e.metaKey||e.ctrlKey||e.altKey)return;
+    var k=e.key;
+    if(k==='ArrowDown'||k===' '||k==='PageDown'){e.preventDefault();go(cur+(e.shiftKey&&k===' '?-1:1))}
+    else if(k==='ArrowUp'||k==='PageUp'){e.preventDefault();go(cur-1)}
+    else if(k==='Home'){e.preventDefault();go(0)}
+    else if(k==='End'){e.preventDefault();go(secs.length-1)}
+    else if(k==='Escape'){go(0)}
+  });
+  mark(0);onScroll();
+})();
+</script>
+</body>
+</html>

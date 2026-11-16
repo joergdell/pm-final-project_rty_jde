@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Income document step - three-arm demo</title>
+<style>
+  :root{--bg:#f3f4f6;--card:#fff;--text:#1f2937;--muted:#6b7280;--line:#d1d5db;--accent:#0b6b4f;--accent-bg:#e6f4ee;--err:#b42318;--err-bg:#fdecea;--warn-bg:#fff7e0}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+  .top{max-width:1000px;margin:0 auto;padding:14px 16px 4px}
+  .top h2{margin:0 0 6px;font-size:18px}
+  .arms{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .arms button{padding:8px 14px;font-weight:600}
+  .arms button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+  .armdesc{font-size:13px;color:var(--muted);margin:8px 0 0}
+  .wrap{display:flex;gap:16px;max-width:1000px;margin:8px auto 24px;padding:0 16px;flex-wrap:wrap;align-items:flex-start}
+  .phone{flex:0 1 430px;width:100%;max-width:430px;min-height:660px;background:var(--card);display:flex;flex-direction:column;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .banner{background:var(--warn-bg);font-size:12px;padding:6px 14px;color:#6b4e00;border-bottom:1px solid #f0e0a8}
+  header{padding:14px 16px 8px;border-bottom:1px solid var(--line)}
+  header .step{font-size:12px;color:var(--muted)}
+  header h1{margin:2px 0 0;font-size:20px}
+  .bar{height:4px;background:var(--line);border-radius:2px;margin-top:10px}
+  .bar i{display:block;height:100%;background:var(--accent);border-radius:2px;width:60%}
+  main{padding:16px;flex:1}
+  .screen{display:none}.screen.on{display:block}
+  .why{background:var(--accent-bg);border-radius:8px;padding:12px 14px;margin-bottom:16px;font-size:14px}
+  .why b{display:block;margin-bottom:4px}
+  .why ul{margin:6px 0 0;padding-left:18px}
+  label.f{display:block;font-weight:600;margin:14px 0 6px;font-size:15px}
+  .hint{font-size:13px;color:var(--muted);font-weight:400}
+  input[type=number]{width:100%;padding:12px;font-size:16px;border:1px solid var(--line);border-radius:8px}
+  .opt{display:flex;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:8px;margin-bottom:8px;font-size:15px}
+  .opt input{width:18px;height:18px}
+  button{font:inherit;cursor:pointer;border-radius:8px;padding:12px 14px;border:1px solid var(--line);background:#fff;color:var(--text)}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  .row{display:flex;gap:10px}.row>*{flex:1}
+  .up{border:1.5px dashed var(--line);border-radius:10px;padding:14px;margin-top:6px}
+  .prog{height:10px;background:var(--line);border-radius:5px;overflow:hidden;margin:10px 0 4px}
+  .prog i{display:block;height:100%;width:0;background:var(--accent);transition:width .15s}
+  .msg{font-size:14px;margin-top:8px;padding:10px 12px;border-radius:8px}
+  .msg.ok{background:var(--accent-bg);color:#064e3b}
+  .msg.err{background:var(--err-bg);color:var(--err)}
+  .saved{font-size:12px;color:var(--muted);margin-top:8px;text-align:center}
+  .sum{border:1px solid var(--line);border-radius:8px}
+  .sum div{display:flex;justify-content:space-between;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line);font-size:15px}
+  .sum div:last-child{border:0}
+  .sum span:first-child{color:var(--muted)}
+  .demo{margin:16px 0 0;padding:10px 12px;background:var(--bg);border-radius:8px;font-size:13px}
+  .demo label{display:flex;gap:8px;align-items:center}
+  .err-inline{color:var(--err);font-size:13px;margin-top:4px}
+  .panel{flex:1 1 320px;min-width:300px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .panel h3{margin:0 0 8px;font-size:15px}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px}
+  .stats div{background:var(--bg);border-radius:8px;padding:6px 8px;font-size:12px;color:var(--muted)}
+  .stats b{display:block;font-size:18px;color:var(--text)}
+  .log{max-height:420px;overflow:auto;border:1px solid var(--line);border-radius:8px;font:12px/1.5 ui-monospace,Menlo,Consolas,monospace}
+  .log div{padding:5px 8px;border-bottom:1px solid var(--line);display:flex;gap:8px}
+  .log div:last-child{border:0}
+  .log .t{color:var(--muted);min-width:46px}
+  .log .a{font-weight:700;min-width:14px}
+  .log .e{font-weight:600}
+  .log .d{color:var(--muted);word-break:break-word}
+  .log .bad .e{color:var(--err)}
+  .log .good .e{color:var(--accent)}
+  .tools{display:flex;gap:8px;margin-top:8px}
+  .tools button{padding:8px 10px;font-size:13px}
+  .empty{padding:12px;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <h2>Income document step: three-arm demo</h2>
+  <div class="arms" id="arms">
+    <button data-arm="A">A Control</button>
+    <button data-arm="B">B Reliability</button>
+    <button data-arm="C">C Reliability + explainer</button>
+    <button data-arm="R">Random (sticky)</button>
+  </div>
+  <p class="armdesc" id="armDesc"></p>
+</div>
+
+<div class="wrap">
+  <div class="phone">
+    <div class="banner">Demo only. Uploads are simulated, nothing is sent anywhere. Retention period is a placeholder.</div>
+    <header>
+      <div class="step" id="stepLabel">Step 3 of 5</div>
+      <h1 id="title">Your income</h1>
+      <div class="bar"><i id="barFill"></i></div>
+    </header>
+    <main>
+
+      <section class="screen on" id="s-income">
+        <div class="why" id="explainer" hidden>
+          <b>Why we ask</b>
+          We use your income to find a monthly amount that fits you, so you are not offered a plan you cannot keep.
+          <ul>
+            <li>Use your <b style="display:inline">normal monthly income</b>, not just this month. If it changes, give an average.</li>
+            <li>Kept for: <i>[retention period, to be confirmed by compliance]</i>.</li>
+          </ul>
+        </div>
+
+        <label class="f">What kind of income do you have?</label>
+        <label class="opt"><input type="radio" name="pattern" value="Fixed salary"> Fixed salary</label>
+        <label class="opt"><input type="radio" name="pattern" value="Variable or shift work"> Variable or shift work</label>
+        <label class="opt"><input type="radio" name="pattern" value="Other or not given"> Other or prefer not to say</label>
+
+        <label class="f" for="amount">Monthly income (EUR)</label>
+        <input type="number" id="amount" min="0" inputmode="numeric" placeholder="enter an amount">
+        <div class="err-inline" id="err-amount" hidden>Enter a monthly amount to continue.</div>
+
+        <label class="f">Income document <span class="hint">photo or file</span></label>
+        <div class="up">
+          <input type="file" id="file" accept="image/*,application/pdf" style="width:100%">
+          <div id="prog" hidden>
+            <div class="prog"><i id="progFill"></i></div>
+            <div class="hint" id="progText"></div>
+          </div>
+          <div class="msg" id="upMsg" hidden></div>
+          <div class="row" style="margin-top:10px" id="retryRow" hidden>
+            <button id="retry">Try again</button>
+          </div>
+        </div>
+
+        <div class="demo">
+          <label><input type="checkbox" id="simFail"> Demo: make the next upload fail</label>
+        </div>
+
+        <div class="row" style="margin-top:16px">
+          <button id="leave">Close and come back later</button>
+          <button class="primary" id="next">Continue</button>
+        </div>
+        <div class="err-inline" id="err-doc" hidden>Add your income document to continue.</div>
+        <div class="saved" id="savedNote">Your answers are saved as you go.</div>
+      </section>
+
+      <section class="screen" id="s-welcome">
+        <p id="welcomeMsg"></p>
+        <div class="sum" id="welcomeSum"></div>
+        <div class="row" style="margin-top:16px">
+          <button class="primary" id="resume">Continue</button>
+        </div>
+      </section>
+
+      <section class="screen" id="s-review">
+        <p>Check your details before we show your plan options.</p>
+        <div class="sum" id="reviewSum"></div>
+        <p class="hint" style="margin-top:12px">If a payment is missed, you will see what happens next before you agree to any plan.</p>
+        <div class="row" style="margin-top:16px">
+          <button id="back">Back</button>
+          <button class="primary" id="agree">Show plan options</button>
+        </div>
+        <div class="saved">Going back keeps all your answers (the T-204 fix is live in every arm).</div>
+      </section>
+
+      <section class="screen" id="s-done">
+        <div class="msg ok"><b>Done. No call needed.</b><br>Your income details are complete. The plan options come next in the full journey.</div>
+        <div class="row" style="margin-top:16px"><button id="restart">Restart journey</button></div>
+      </section>
+
+    </main>
+  </div>
+
+  <div class="panel">
+    <h3>Event log (this browser only)</h3>
+    <div class="stats">
+      <div><b id="stAtt">0</b>upload attempts</div>
+      <div><b id="stOk">0</b>succeeded</div>
+      <div><b id="stFail">0</b>failed</div>
+      <div><b id="stFirst">-</b>first try ok</div>
+    </div>
+    <div class="log" id="log"><div class="empty">No events yet. Pick an arm and walk through the journey.</div></div>
+    <div class="tools">
+      <button id="copyLog">Copy log (JSON)</button>
+      <button id="clearLog">Clear log</button>
+    </div>
+    <p class="hint" style="margin-top:10px">Arm A is the control as the research describes it (T-201, T-206). To show the failure, its demo upload times out for files over 1.5 MB and the document then silently goes missing. That threshold is a demo assumption, not a measured value. Arms B and C shrink the photo first, show progress and offer a retry. Arm C adds the explainer.</p>
+  </div>
+</div>
+
+<script>
+(function(){
+  var KEY='income-proto-v2';
+  var ARMDESC={
+    A:'Control: no explainer, no progress or error message, large photos time out, answers are lost if you leave.',
+    B:'Reliability: photo is shrunk first, progress and retry, answers kept on leaving and returning. No explainer.',
+    C:'Reliability plus explainer: everything in B, plus the short "why we ask" text on the income step.'
+  };
+  var DEMO_FAIL_BYTES=1.5*1048576;
+  var arm='A', assignMethod='manual';
+  var state=fresh();
+  var events=[], t0=Date.now();
+  var uploading=false, timer=null, pendingFile=null, firstAttemptDone=false, firstAttemptOk=null;
+  var $=function(id){return document.getElementById(id)};
+
+  function fresh(){return {pattern:'',amount:'',docName:'',docInfo:'',screen:'income'}}
+  function keeps(){return arm==='B'||arm==='C'}
+  function esc(t){return String(t).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  function kb(n){return n>=1048576?(n/1048576).toFixed(1)+' MB':Math.max(1,Math.round(n/1024))+' KB'}
+
+  function store(){try{sessionStorage.setItem(KEY,JSON.stringify({arm:arm,method:assignMethod,state:state,events:events,t0:t0}))}catch(e){}}
+  function restore(){
+    try{
+      var s=JSON.parse(sessionStorage.getItem(KEY)||'null');
+      if(s){arm=s.arm||'A';assignMethod=s.method||'manual';state=s.state||fresh();events=s.events||[];t0=s.t0||Date.now()}
+    }catch(e){}
+  }
+
+  function log(name,detail,tone){
+    events.push({t:Math.round((Date.now()-t0)/100)/10,arm:arm,event:name,detail:detail||'',tone:tone||''});
+    store();renderLog();
+  }
+  function renderLog(){
+    var box=$('log');
+    if(!events.length){box.innerHTML='<div class="empty">No events yet. Pick an arm and walk through the journey.</div>';statsRender();return}
+    var h='';
+    for(var i=events.length-1;i>=0;i--){
+      var e=events[i];
+      h+='<div class="'+e.tone+'"><span class="t">'+e.t.toFixed(1)+'s</span><span class="a">'+e.arm+'</span><span class="e">'+esc(e.event)+'</span><span class="d">'+esc(e.detail)+'</span></div>';
+    }
+    box.innerHTML=h;statsRender();
+  }
+  function statsRender(){
+    var att=0,ok=0,fail=0;
+    events.forEach(function(e){
+      if(e.event==='upload_attempt')att++;
+      if(e.event==='upload_success')ok++;
+      if(e.event==='upload_failed')fail++;
+    });
+    $('stAtt').textContent=att;$('stOk').textContent=ok;$('stFail').textContent=fail;
+    $('stFirst').textContent=firstAttemptOk===null?'-':(firstAttemptOk?'yes':'no');
+  }
+
+  var meta={
+    income:['Step 3 of 5','Your income','60%'],
+    welcome:['Step 3 of 5','Welcome back','60%'],
+    review:['Step 4 of 5','Review your details','80%'],
+    done:['Step 5 of 5','All set','100%']
+  };
+  function show(name){
+    state.screen=name;store();
+    ['income','welcome','review','done'].forEach(function(n){$('s-'+n).classList.toggle('on',n===name)});
+    $('stepLabel').textContent=meta[name][0];$('title').textContent=meta[name][1];$('barFill').style.width=meta[name][2];
+    log('screen_view',name);
+    if(name==='income'&&arm==='C')log('explainer_shown','income step');
+  }
+  function summaryHtml(){
+    return '<div><span>Income type</span><span>'+esc(state.pattern||'not given')+'</span></div>'+
+           '<div><span>Monthly income</span><span>'+(state.amount?esc(state.amount)+' EUR':'not given')+'</span></div>'+
+           '<div><span>Income document</span><span>'+esc(state.docName||'none')+'</span></div>';
+  }
+  function setMsg(type,text){var m=$('upMsg');m.className='msg '+type;m.textContent=text;m.hidden=false}
+
+  function applyArm(){
+    document.querySelectorAll('#arms button').forEach(function(b){
+      var on=(b.dataset.arm===arm&&assignMethod==='manual')||(b.dataset.arm==='R'&&assignMethod==='random');
+      b.classList.toggle('on',on);
+    });
+    $('armDesc').textContent='Arm '+arm+(assignMethod==='random'?' (randomly assigned, sticky): ':': ')+ARMDESC[arm];
+    $('explainer').hidden=(arm!=='C');
+    $('savedNote').hidden=!keeps();
+  }
+
+  function fillForm(){
+    var r=document.querySelectorAll('input[name=pattern]');
+    for(var i=0;i<r.length;i++){r[i].checked=(r[i].value===state.pattern)}
+    $('amount').value=state.amount;
+    $('err-amount').hidden=true;$('err-doc').hidden=true;
+    if(state.docName){setMsg('ok','Document received: '+state.docName+(state.docInfo?' ('+state.docInfo+')':'')+'.')}
+    else{$('upMsg').hidden=true}
+    $('retryRow').hidden=true;$('prog').hidden=true;
+  }
+
+  function resetJourney(){
+    if(timer){clearInterval(timer)}
+    uploading=false;pendingFile=null;firstAttemptDone=false;firstAttemptOk=null;
+    state=fresh();$('file').value='';$('simFail').checked=false;
+    $('next').disabled=false;
+    fillForm();
+  }
+  function setArm(a,method){
+    var oldWasRandom=(method==='random');
+    arm=a;assignMethod=method;
+    resetJourney();applyArm();store();
+    log('arm_assigned',a+' ('+(oldWasRandom?'random, sticky':'manual')+')');
+    show('income');
+  }
+
+  function compress(file){
+    return new Promise(function(resolve){
+      if(!keeps()||!file.type||file.type.indexOf('image/')!==0){resolve({size:file.size,note:'',compressed:false});return}
+      var url=URL.createObjectURL(file),img=new Image();
+      img.onload=function(){
+        var max=1600,sc=Math.min(1,max/Math.max(img.width,img.height));
+        var c=document.createElement('canvas');c.width=Math.round(img.width*sc);c.height=Math.round(img.height*sc);
+        c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+        c.toBlob(function(b){
+          URL.revokeObjectURL(url);
+          if(b&&b.size<file.size){resolve({size:b.size,note:'reduced from '+kb(file.size)+' to '+kb(b.size),compressed:true})}
+          else{resolve({size:file.size,note:'',compressed:false})}
+        },'image/jpeg',0.82);
+      };
+      img.onerror=function(){URL.revokeObjectURL(url);resolve({size:file.size,note:'',compressed:false})};
+      img.src=url;
+    });
+  }
+
+  function attemptDone(ok){
+    if(!firstAttemptDone){firstAttemptDone=true;firstAttemptOk=ok}
+  }
+
+  function startUpload(file){
+    if(uploading)return;
+    pendingFile=file;uploading=true;
+    $('retryRow').hidden=true;$('upMsg').hidden=true;$('err-doc').hidden=true;
+    var showProg=keeps();
+    $('prog').hidden=!showProg;$('progFill').style.width='0%';$('progText').textContent=showProg?'Preparing photo...':'';
+    $('next').disabled=true;
+    log('upload_attempt',file.name+', '+kb(file.size));
+    compress(file).then(function(res){
+      var pct=0;
+      var simulated=$('simFail').checked;
+      var timeoutA=(arm==='A'&&res.size>DEMO_FAIL_BYTES);
+      var willFail=simulated||timeoutA;
+      var reason=simulated?'simulated failure':'timeout, file '+kb(res.size);
+      if(showProg)$('progText').textContent='Uploading '+kb(res.size)+'...';
+      timer=setInterval(function(){
+        pct+=Math.random()*12+6;
+        if(willFail&&pct>=60){
+          clearInterval(timer);uploading=false;$('simFail').checked=false;
+          attemptDone(false);
+          log('upload_failed',reason,'bad');
+          $('next').disabled=false;
+          if(keeps()){
+            $('progFill').style.width='60%';$('progText').textContent='Upload stopped at 60%';
+            setMsg('err','The upload did not finish. Nothing was submitted yet. Please try again.');
+            $('retryRow').hidden=false;
+          }
+          return;
+        }
+        if(pct>=100){
+          clearInterval(timer);uploading=false;
+          attemptDone(true);
+          if(showProg){$('progFill').style.width='100%';$('progText').textContent='Upload complete'}
+          state.docName=file.name;state.docInfo=res.note;store();
+          if(keeps()){setMsg('ok','Document received: '+file.name+(res.note?' ('+res.note+')':'')+'.')}
+          log('upload_success',kb(res.size)+(res.compressed?' (shrunk)':''),'good');
+          $('next').disabled=false;
+          return;
+        }
+        if(showProg)$('progFill').style.width=Math.round(pct)+'%';
+      },160);
+    });
+  }
+
+  $('file').addEventListener('change',function(e){
+    var f=e.target.files&&e.target.files[0];
+    if(f){state.docName='';store();startUpload(f)}
+  });
+  $('retry').addEventListener('click',function(){
+    log('retry_clicked','');
+    if(pendingFile){startUpload(pendingFile)}else{$('file').click()}
+  });
+  document.querySelectorAll('input[name=pattern]').forEach(function(r){
+    r.addEventListener('change',function(){state.pattern=r.value;store()});
+  });
+  $('amount').addEventListener('input',function(){state.amount=this.value;$('err-amount').hidden=true;store()});
+
+  $('next').addEventListener('click',function(){
+    var ok=true,why=[];
+    if(!state.amount||Number(state.amount)<=0){$('err-amount').hidden=false;ok=false;why.push('no amount')}
+    if(!state.docName){$('err-doc').hidden=false;ok=false;why.push('no document')}
+    if(!ok){log('continue_blocked',why.join(', '),'bad');return}
+    $('reviewSum').innerHTML=summaryHtml();
+    log('continued_to_review','','good');
+    show('review');
+  });
+  $('back').addEventListener('click',function(){log('back_clicked','from review');fillForm();show('income')});
+  $('agree').addEventListener('click',function(){log('agreed','no agent call','good');show('done')});
+  $('leave').addEventListener('click',function(){
+    if(uploading){clearInterval(timer);uploading=false;$('next').disabled=false}
+    log('left_journey','');
+    if(keeps()){
+      $('welcomeMsg').innerHTML='<b>Welcome back.</b> Your answers were saved.';
+      $('welcomeSum').innerHTML=summaryHtml();
+      $('resume').textContent='Continue where I left off';
+    }else{
+      state=fresh();store();
+      $('welcomeMsg').innerHTML='<b>Welcome back.</b> We could not keep your answers.';
+      $('welcomeSum').innerHTML=summaryHtml();
+      $('resume').textContent='Start again';
+    }
+    show('welcome');
+  });
+  $('resume').addEventListener('click',function(){
+    if(keeps()){log('answers_restored','')}else{log('answers_lost','','bad');$('file').value=''}
+    fillForm();show('income');
+  });
+  $('restart').addEventListener('click',function(){
+    resetJourney();log('journey_restarted','');show('income');
+  });
+
+  document.querySelectorAll('#arms button').forEach(function(b){
+    b.addEventListener('click',function(){
+      var a=b.dataset.arm;
+      if(a==='R'){
+        var key='income-proto-random-arm',pick=null;
+        try{pick=sessionStorage.getItem(key)}catch(e){}
+        if(!pick){pick=['A','B','C'][Math.floor(Math.random()*3)];try{sessionStorage.setItem(key,pick)}catch(e){}}
+        setArm(pick,'random');
+      }else{setArm(a,'manual')}
+    });
+  });
+
+  $('clearLog').addEventListener('click',function(){events=[];t0=Date.now();store();renderLog()});
+  $('copyLog').addEventListener('click',function(){
+    var txt=JSON.stringify(events,null,2),btn=$('copyLog');
+    function done(m){btn.textContent=m;setTimeout(function(){btn.textContent='Copy log (JSON)'},1500)}
+    try{navigator.clipboard.writeText(txt).then(function(){done('Copied')},function(){fallback()})}catch(e){fallback()}
+    function fallback(){
+      var ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();
+      try{document.execCommand('copy');done('Copied')}catch(e){done('Copy failed')}
+      document.body.removeChild(ta);
+    }
+  });
+
+  restore();
+  applyArm();
+  fillForm();
+  renderLog();
+  var s=state.screen;
+  if(s==='review'){$('reviewSum').innerHTML=summaryHtml()}
+  if(s==='welcome'){$('welcomeSum').innerHTML=summaryHtml()}
+  if(!meta[s])s='income';
+  ['income','welcome','review','done'].forEach(function(n){$('s-'+n).classList.toggle('on',n===s)});
+  $('stepLabel').textContent=meta[s][0];$('title').textContent=meta[s][1];$('barFill').style.width=meta[s][2];
+  if(!events.length){log('arm_assigned',arm+' (default)');log('screen_view',s)}
+})();
+</script>
+</body>
+</html>
